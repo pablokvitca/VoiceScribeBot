@@ -1,0 +1,26 @@
+{
+  "name": "voice-scribe-bot",
+  "version": "1.0.0",
+  "description": "VoiceScribe bot allows users to easily convert audio voice notes to text using Cloud Speech-To-Text software.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/pablokvitca/VoiceScribeBot.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "voice-to-text",
+    "speech-to-text",
+    "chatbot"
+  ],
+  "author": "@pablokvitca",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pablokvitca/VoiceScribeBot/issues"
+  },
+  "homepage": "https://github.com/pablokvitca/VoiceScribeBot#readme"
+}
