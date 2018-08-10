@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   "homepage": "https://github.com/pablokvitca/VoiceScribeBot#readme",
   "dependencies": {
     "dotenv": "^6.0.0",
+    "lodash": "^4.17.10",
     "telegraf": "^3.22.2"
   }
 }
