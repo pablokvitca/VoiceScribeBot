@@ -74,3 +74,5 @@ typings/
 
 #Keys files (get from consoles)
 .voice-scribe-bot-firebase-store.json
+
+/dist
