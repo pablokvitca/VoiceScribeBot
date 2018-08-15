@@ -5,7 +5,7 @@ const languages = [
 
 let currentLanguage = languages[0];
 
-export function init(bot) {
+export default function setDefaultLanguageCommand(bot) {
     bot.command('setdefaultlanguage', (ctx) => {
         function parseMessage(message, langs) {
             console.log(message.text);
