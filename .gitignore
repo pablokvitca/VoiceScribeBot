@@ -71,3 +71,6 @@ typings/
 
 # Serverless directories
 .serverless
+
+#Keys files (get from consoles)
+.voice-scribe-bot-firebase-store.json
