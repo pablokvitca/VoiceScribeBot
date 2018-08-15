@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es6"
+    ],
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  },
+  "resolveJsonModule": true,
+  "compileOnSave": false,
+  "include": [
+    "src",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts",
+    "src/**/__tests__/*.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}
