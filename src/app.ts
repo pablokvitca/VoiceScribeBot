@@ -3,9 +3,11 @@ import * as dotenv from 'dotenv';
 import * as admin from 'firebase-admin';
 import Telegraf from 'telegraf';
 import registerCommands from './commands';
+import { Bucket } from '@google-cloud/storage';
 
 const session = require('telegraf/session')
 const serviceAccount = require('../.voice-scribe-bot-firebase-store.json');
+const Stage = require('telegraf/stage');
 
 export class App {
 
@@ -17,6 +19,9 @@ export class App {
 
     bot: Telegraf<any>;
     db: Firestore;
+    stage: any;
+    storage: admin.storage.Storage;
+    bucket: Bucket;
 
     constructor() {
         this.configureEnvironment();
@@ -34,7 +39,8 @@ export class App {
         // Initialize the app with a service account, granting admin privileges
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount), //IF RUNNING ON GCP USE: admin.credential.applicationDefault()
-            databaseURL: process.env.FIREBASE_DATABASE_URL
+            databaseURL: process.env.FIREBASE_DATABASE_URL,
+            storageBucket: 'gs://voice-scribe-bot.appspot.com'
         });
 
         // As an admin, the app has access to read and write all data, regardless of Security Rules
@@ -47,13 +53,18 @@ export class App {
             }).catch((err) => {
                 console.log('Error getting documents', err);
             });
+
+        this.storage = admin.storage();
+        this.bucket = this.storage.bucket();
     }
 
     private configureTelegraf() {
         this.status.telegraf = true;
         this.bot = new Telegraf(process.env.TELEGRAM_CHATBOT_TOKEN);
         this.bot.use(session());
-        registerCommands(this.bot, this.db);
+        this.stage = new Stage([], { default: 'super-wizard' });
+        this.bot.use(this.stage.middleware());
+        registerCommands(this);
     }
 
     startPolling() {

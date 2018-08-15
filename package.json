@@ -28,7 +28,10 @@
   "homepage": "https://github.com/pablokvitca/VoiceScribeBot#readme",
   "dependencies": {
     "@types/dotenv": "^4.0.3",
+    "@types/download": "^6.2.2",
+    "@types/lodash": "^4.14.116",
     "dotenv": "^6.0.0",
+    "download": "^7.1.0",
     "firebase-admin": "^6.0.0",
     "lodash": "^4.17.10",
     "telegraf": "^3.22.2"

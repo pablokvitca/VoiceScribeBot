@@ -4,7 +4,6 @@ import { App } from '../app';
 
 const Markup = require('telegraf/markup');
 const WizardScene = require('telegraf/scenes/wizard');
-const Stage = require('telegraf/stage');
 
 export default function welcomeMessage(bot: Telegraf<any>, firestore: Firestore) {
 
@@ -100,11 +99,14 @@ export default function welcomeMessage(bot: Telegraf<any>, firestore: Firestore)
         }
     );
 
-    const stage = new Stage([superWizard], { default: 'super-wizard' });
-    bot.use(stage.middleware());
-
     bot.start((ctx: any) => {
-        ctx.wizard.start();
-        ctx.wizard.next();
+        firestore.collection('users').doc(App.hashedID(ctx)).get()
+            .then((doc: DocumentSnapshot) => {
+                if (!doc.exists)
+                    ctx.wizard.start();
+            })
+            .catch((error: any) => {
+                console.log(error);
+            });
     });
 }
