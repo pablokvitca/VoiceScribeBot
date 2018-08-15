@@ -73,6 +73,8 @@ typings/
 .serverless
 
 #Keys files (get from consoles)
-.voice-scribe-bot-firebase-store.json
+.*-key.json
+.voice-scribe-bot-firebase-key.json
+.voice-scribe-bot-speech-2-text-service-key
 
 /dist

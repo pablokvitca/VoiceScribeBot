@@ -8,11 +8,8 @@ let currentLanguage = languages[0];
 export default function setDefaultLanguageCommand(bot) {
     bot.command('setdefaultlanguage', (ctx) => {
         function parseMessage(message, langs) {
-            console.log(message.text);
             const rawArgs = message.text.replace('/setdefaultlanguage ', '');
-            console.log(rawArgs);
             const args = rawArgs.split(" ");
-            console.log(args);
             let newLang;
             langs.forEach((lang, key) => {
                 if (args[0] == lang) {
@@ -22,7 +19,6 @@ export default function setDefaultLanguageCommand(bot) {
                     console.log("IS NOT " + lang);
                 }
             });
-            console.log(newLang);
             return newLang;
         }
         const newLang = parseMessage(ctx.message, languages);

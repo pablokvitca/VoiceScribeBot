@@ -6,7 +6,7 @@ import registerCommands from './commands';
 import { Bucket } from '@google-cloud/storage';
 
 const session = require('telegraf/session')
-const serviceAccount = require('../.voice-scribe-bot-firebase-store.json');
+const serviceAccount = require('../.voice-scribe-bot-firebase-key.json');
 const Stage = require('telegraf/stage');
 
 export class App {
@@ -22,10 +22,12 @@ export class App {
     stage: any;
     storage: admin.storage.Storage;
     bucket: Bucket;
+    speechClient: any;
 
     constructor() {
         this.configureEnvironment();
         this.configureFirebase();
+        this.configureSpeechClient();
         this.configureTelegraf();
     }
 
@@ -56,6 +58,11 @@ export class App {
 
         this.storage = admin.storage();
         this.bucket = this.storage.bucket();
+    }
+
+    private configureSpeechClient() {
+        const speech = require('@google-cloud/speech');
+        this.speechClient = new speech.SpeechClient();
     }
 
     private configureTelegraf() {
