@@ -1,7 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as admin from 'firebase-admin';
 import Telegraf from 'telegraf';
-import serviceAccount from '../.voice-scribe-bot-firebase-store.json';
 import registerCommands from './commands';
 
 class App {
@@ -12,11 +11,12 @@ class App {
         telegraf: false
     }
 
-    bot: any;
+    bot: Telegraf<any>;
+    db: admin.database.Database;
 
     constructor() {
         this.configureEnvironment();
-        //this.configureFirebase();
+        this.configureFirebase();
         this.configureTelegraf();
     }
 
@@ -29,17 +29,18 @@ class App {
         this.status.firebase = true;
         // Initialize the app with a service account, granting admin privileges
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            databaseURL: "https://voice-scribe-bot.firebaseio.com"
+            credential: admin.credential.cert({
+                projectId: process.env.FIREBASE_CONNECTION_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CONNECTION_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_CONNECTION_PRIVATE_KEY
+            }), //IF RUNNING ON GCP USE: admin.credential.applicationDefault()
+            databaseURL: process.env.FIREBASE_DATABASE_URL
         });
 
         // As an admin, the app has access to read and write all data, regardless of Security Rules
-        var db = admin.database();
-        var ref = db.ref("restricted_access/secret_document");
-        //TODO: DUMMY SCAFFOLD
-        ref.once("value", function (snapshot) {
-            console.log(snapshot.val());
-        });
+        this.db = admin.database();
+        const languages = this.db.ref('languages');
+        console.log(languages);
     }
 
     private configureTelegraf() {
