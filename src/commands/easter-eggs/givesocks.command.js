@@ -1,5 +1,3 @@
-module.exports = {
-    init: (bot) => {
-        bot.command('givesocks', ({ reply }) => reply('Dobby is free.'));
-    }
+export function init(bot) {
+    bot.command('givesocks', ({ reply }) => reply('Dobby is free.'));
 }

@@ -1,4 +1,4 @@
-const Telegraf = require('telegraf');
+import Telegraf from 'telegraf';
 const bot = new Telegraf(process.env.TELEGRAM_CHATBOT_TOKEN);
 
 require('./welcome.message').init(bot);

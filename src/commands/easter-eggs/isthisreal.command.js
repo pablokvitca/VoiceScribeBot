@@ -1,7 +1,3 @@
-module.exports = {
-    init: (bot) => {
-        bot.command(['isthisreal', 'isthisreal?'], ({ reply }) =>
-            reply('Of course it\'s happening inside your head, Harry. But why on Earth would that mean it\'s not real?')
-        );
-    }
+export function init(bot) {
+    bot.command(['isthisreal', 'isthisreal?'], ({ reply }) => reply('Of course it\'s happening inside your head, Harry. But why on Earth would that mean it\'s not real?'));
 }
