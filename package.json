@@ -6,9 +6,8 @@
   "private": true,
   "scripts": {
     "start": "npm run build:run",
-    "start:live": "npm run build:live",
-    "build": "tsc",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts"
+    "build": "rm -rf dist && tsc",
+    "lint": "tslint --project tsconfig.json"
   },
   "repository": {
     "type": "git",

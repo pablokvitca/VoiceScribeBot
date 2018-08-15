@@ -1,7 +1,10 @@
+import { Firestore, QueryDocumentSnapshot, QuerySnapshot } from '@google-cloud/firestore';
 import * as dotenv from 'dotenv';
 import * as admin from 'firebase-admin';
 import Telegraf from 'telegraf';
 import registerCommands from './commands';
+
+var serviceAccount = require('../.voice-scribe-bot-firebase-store.json');
 
 class App {
 
@@ -12,7 +15,7 @@ class App {
     }
 
     bot: Telegraf<any>;
-    db: admin.database.Database;
+    db: Firestore;
 
     constructor() {
         this.configureEnvironment();
@@ -29,18 +32,20 @@ class App {
         this.status.firebase = true;
         // Initialize the app with a service account, granting admin privileges
         admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_CONNECTION_PROJECT_ID,
-                clientEmail: process.env.FIREBASE_CONNECTION_CLIENT_EMAIL,
-                privateKey: process.env.FIREBASE_CONNECTION_PRIVATE_KEY
-            }), //IF RUNNING ON GCP USE: admin.credential.applicationDefault()
+            credential: admin.credential.cert(serviceAccount), //IF RUNNING ON GCP USE: admin.credential.applicationDefault()
             databaseURL: process.env.FIREBASE_DATABASE_URL
         });
 
         // As an admin, the app has access to read and write all data, regardless of Security Rules
-        this.db = admin.database();
-        const languages = this.db.ref('languages');
-        console.log(languages);
+        this.db = admin.firestore();
+        this.db.collection('languages').get()
+            .then((languages: QuerySnapshot) => {
+                languages.forEach((doc: QueryDocumentSnapshot) => {
+                    console.log(doc.id, '=>', doc.data());
+                });
+            }).catch((err) => {
+                console.log('Error getting documents', err);
+            });
     }
 
     private configureTelegraf() {
