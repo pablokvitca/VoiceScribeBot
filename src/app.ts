@@ -4,9 +4,10 @@ import * as admin from 'firebase-admin';
 import Telegraf from 'telegraf';
 import registerCommands from './commands';
 
-var serviceAccount = require('../.voice-scribe-bot-firebase-store.json');
+const session = require('telegraf/session')
+const serviceAccount = require('../.voice-scribe-bot-firebase-store.json');
 
-class App {
+export class App {
 
     status = {
         env: undefined,
@@ -51,13 +52,19 @@ class App {
     private configureTelegraf() {
         this.status.telegraf = true;
         this.bot = new Telegraf(process.env.TELEGRAM_CHATBOT_TOKEN);
-        registerCommands(this.bot);
+        this.bot.use(session());
+        registerCommands(this.bot, this.db);
     }
 
     startPolling() {
         if (this.status.telegraf && this.bot) {
             this.bot.startPolling();
         }
+    }
+
+    public static hashedID(ctx) {
+        const crypto = require("crypto");
+        return crypto.createHash('md5').update('U' + ctx.message.from.id).digest("hex");
     }
 }
 
