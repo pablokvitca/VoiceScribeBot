@@ -3,10 +3,12 @@ import * as download from 'download';
 import { File } from 'telegram-typings';
 import { App } from './../app';
 
+const linear16 = require('linear16');
+
 export default function onVoiceAudio(app: App) {
-    app.bot.on(['voice', 'audio'], (ctx) => {
-        if (ctx.message.voice) {
-            const voice = ctx.message.voice;
+    app.bot.on(['voice', 'audio', 'document'], (ctx) => {
+        if (ctx.message.voice || ctx.message.document || ctx.message.audio) {
+            const voice = ctx.message.voice || ctx.message.document || ctx.message.audio;
             let filePath;
             ctx.telegram.getFile(voice.file_id)
                 .then((file: File) => {
@@ -19,10 +21,19 @@ export default function onVoiceAudio(app: App) {
                 })
                 .then(() => {
                     const fp: string[] = filePath.split('/');
-                    const path: string = process.env.DOWNLOADS_DIR
+                    const path: string =
+                        process.env.DOWNLOADS_DIR
                         + '/'
                         + fp[fp.length - 1];
-                    return app.bucket.upload(path)
+                    const output =
+                        process.env.DOWNLOADS_DIR
+                        + '/'
+                        + App.hashedID(ctx) + '-' + Date.now()
+                        + '.wav';
+                    return linear16(path, output);
+                })
+                .then((convertedOutputPath) => {
+                    return app.bucket.upload(convertedOutputPath)
                 })
                 .then((reply) => {
                     const file = reply[0];

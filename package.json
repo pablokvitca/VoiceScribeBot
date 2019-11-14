@@ -34,6 +34,7 @@
     "dotenv": "^6.0.0",
     "download": "^7.1.0",
     "firebase-admin": "^6.0.0",
+    "linear16": "^1.0.1",
     "lodash": "^4.17.10",
     "telegraf": "^3.22.2"
   },
