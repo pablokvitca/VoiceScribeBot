@@ -30,7 +30,8 @@ export default function onVoiceAudio(app: App) {
                         + '/'
                         + App.hashedID(ctx) + '-' + Date.now()
                         + '.wav';
-                    return linear16(path, output);
+                    //return linear16(path, output); //TODO:
+                    return path
                 })
                 .then((convertedOutputPath) => {
                     return app.bucket.upload(convertedOutputPath)

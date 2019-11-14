@@ -8,6 +8,7 @@ import { Bucket } from '@google-cloud/storage';
 const session = require('telegraf/session')
 const serviceAccount = require('../.voice-scribe-bot-firebase-key.json');
 const Stage = require('telegraf/stage');
+const speech = require('@google-cloud/speech');
 
 export class App {
 
@@ -33,7 +34,7 @@ export class App {
 
     private configureEnvironment() {
         dotenv.config();
-        this.status.env = process.env.environment; //TODO: TEST
+        this.status.env = process.env.environment;
     }
 
     private configureFirebase() {
@@ -61,7 +62,6 @@ export class App {
     }
 
     private configureSpeechClient() {
-        const speech = require('@google-cloud/speech');
         this.speechClient = new speech.SpeechClient();
     }
 

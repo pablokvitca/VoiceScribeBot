@@ -19,9 +19,6 @@ export default function transcribeCommand(app: App) {
                 if (args[0] == lang) {
                     newLang = key;
                 }
-                else {
-                    console.log("IS NOT " + lang);
-                }
             });
             return newLang;
         }
@@ -40,7 +37,7 @@ export default function transcribeCommand(app: App) {
                                 "uri": "gs://voice-scribe-bot.appspot.com/" + data["last-audio-uploaded"].id
                             },
                             config: {
-                                encoding: 'LINEAR16',
+                                encoding: "OGG_OPUS",
                                 sampleRateHertz: 48000,
                                 languageCode: 'en-US'
                             }
@@ -50,7 +47,7 @@ export default function transcribeCommand(app: App) {
                         ctx.reply('You need to first foward an audio/voice message to your scribe.');
                     }
                 } else {
-                    ctx.reply('Sorry, we could not authentificate your user. Please your /start again');
+                    ctx.reply('Sorry, we could not authentificate your user. Please use /start again');
                 }
             })
             .then((data) => {
@@ -70,6 +67,7 @@ export default function transcribeCommand(app: App) {
                 }
             })
             .catch((err) => {
+                console.log(err);
                 ctx.reply('Sorry, we had an error transcribing your audio. Please try again later.');
             });
     });
