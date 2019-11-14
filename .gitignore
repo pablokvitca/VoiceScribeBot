@@ -71,3 +71,10 @@ typings/
 
 # Serverless directories
 .serverless
+
+#Keys files (get from consoles)
+.*-key.json
+.voice-scribe-bot-firebase-key.json
+.voice-scribe-bot-speech-2-text-service-key
+
+/dist
