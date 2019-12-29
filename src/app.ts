@@ -48,15 +48,6 @@ export class App {
 
         // As an admin, the app has access to read and write all data, regardless of Security Rules
         this.db = admin.firestore();
-        this.db.collection('languages').get()
-            .then((languages: QuerySnapshot) => {
-                languages.forEach((doc: QueryDocumentSnapshot) => {
-                    console.log(doc.id, '=>', doc.data());
-                });
-            }).catch((err) => {
-                console.log('Error getting documents', err);
-            });
-
         this.storage = admin.storage();
         this.bucket = this.storage.bucket();
     }
