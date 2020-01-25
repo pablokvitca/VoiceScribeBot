@@ -40,11 +40,11 @@ function transcribeAudio(app: App, ctx: any, doc: DocumentSnapshot) {
         const data = doc.data();
         if (dataContainsAudio(data)) {
             const audio = data["last-audio-uploaded"]
-            const encoding = audio.data_encoding || "OGG_OPUS"
-            const sample_rate = audio.sample_rate || 48000
+            const encoding = audio.encoding
+            const sample_rate = audio.sample_rate
             const request = {
                 audio: {
-                    "uri": `gs://${app.bucket.id}/${audio.id}`
+                    uri: `gs://${app.bucket.id}/${audio.id}`
                 },
                 config: {
                     encoding: encoding,
@@ -81,7 +81,7 @@ function sendTranscription(ctx: any, data: any) {
         ctx.reply(highest.transcript);
         //TODO: save transcriptions to firebase
     } else {
-        ctx.reply('We could not transcribe anything from that. Sorry.');
+        ctx.reply('We could not transcribe anything from that. Sorry. Currently we only support audio files recorded directly on the Telegram app.');
     }
 }
 

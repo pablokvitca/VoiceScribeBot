@@ -2,8 +2,64 @@ import { FileMetadata } from "@google-cloud/storage";
 import * as download from 'download';
 import { File } from 'telegram-typings';
 import { App } from './../app';
+import * as fs from 'fs';
 
-const linear16 = require('linear16');
+function downloadFromMessageServer(ctx: any, file: File) {
+    const url = 'https://api.telegram.org/file/bot'
+        + ctx.telegram.token
+        + '/'
+        + file.file_path;
+    return download(url, process.env.DOWNLOADS_DIR)
+}
+
+function uniqueFileNaming(ctx: any, filePath: String) {
+    const fp: string[] = filePath.split('/');
+    const filename = fp[fp.length - 1];
+    const path: string =
+        process.env.DOWNLOADS_DIR + '/' + filename;
+    const extension = filename.split(".").pop();
+    const output =
+        process.env.DOWNLOADS_DIR
+        + '/' + App.hashedID(ctx) + '.' + Date.now()
+        + '.' + extension;
+    fs.renameSync(path, output)
+    return output;
+}
+
+function getEncodingFromFile(file: any) {
+    switch (file.metadata.contentType) {
+        case "audio/ogg":
+            return "OGG_OPUS";
+        case "audio/wave":
+            return "LINEAR16";
+        case "audio/mp3":
+            return "MP3";
+        default:
+            throw new Error("Invalid audio format");
+    }
+}
+
+function getSampleRateFromFile(file: any) {
+    return 48000;
+}
+
+function addFileToFirebase(app: any, ctx: any, uploadReply: any) {
+    const file = uploadReply[0];
+    const fileMetadata: FileMetadata = file.metadata;
+    return app.db.collection('users').doc(App.hashedID(ctx)).update({
+        "last-audio-uploaded": {
+            metadata: {
+                id: fileMetadata.id,
+                mediaLink: fileMetadata.mediaLink,
+                name: fileMetadata.name,
+                timestamp: fileMetadata.updated || fileMetadata.timeCreated,
+            },
+            id: file.id,
+            encoding: getEncodingFromFile(file),
+            sample_rate: getSampleRateFromFile(file)
+        }
+    });
+}
 
 export default function onVoiceAudio(app: App) {
     app.bot.on(['voice', 'audio', 'document'], (ctx) => {
@@ -13,43 +69,16 @@ export default function onVoiceAudio(app: App) {
             ctx.telegram.getFile(voice.file_id)
                 .then((file: File) => {
                     filePath = file.file_path;
-                    const url = 'https://api.telegram.org/file/bot'
-                        + ctx.telegram.token
-                        + '/'
-                        + file.file_path;
-                    return download(url, process.env.DOWNLOADS_DIR)
+                    return downloadFromMessageServer(ctx, file);
                 })
                 .then(() => {
-                    const fp: string[] = filePath.split('/');
-                    const path: string =
-                        process.env.DOWNLOADS_DIR
-                        + '/'
-                        + fp[fp.length - 1];
-                    const output =
-                        process.env.DOWNLOADS_DIR
-                        + '/'
-                        + App.hashedID(ctx) + '-' + Date.now()
-                        + '.wav';
-                    //return linear16(path, output); //TODO:
-                    return path
+                    return uniqueFileNaming(ctx, filePath);
                 })
                 .then((convertedOutputPath) => {
                     return app.bucket.upload(convertedOutputPath)
                 })
-                .then((reply) => {
-                    const file = reply[0];
-                    const fileMetadata: FileMetadata = file.metadata;
-                    return app.db.collection('users').doc(App.hashedID(ctx)).update({
-                        "last-audio-uploaded": {
-                            metadata: {
-                                id: fileMetadata.id,
-                                mediaLink: fileMetadata.mediaLink,
-                                name: fileMetadata.name,
-                                timestamp: fileMetadata.updated || fileMetadata.timeCreated
-                            },
-                            id: file.id
-                        }
-                    });
+                .then((uploadReply) => {
+                    return addFileToFirebase(app, ctx, uploadReply)
                 })
                 .catch((error: any) => {
                     console.error(error);
