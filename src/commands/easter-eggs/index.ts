@@ -3,12 +3,10 @@ import giveSocksEasterEgg from './givesocks.easteregg';
 import attackEasterEgg from './attack.easteregg';
 import isThisRealEasterEgg from './isthisreal.easteregg';
 import haveIGoneMadEasterEgg from './haveigonemad.easteregg';
-import iVeLostTheGameEasterEgg from './ivelostthegame.easteregg';
 
 export default function registerEasterEggs(bot: Telegraf<any>) {
     giveSocksEasterEgg(bot);
     attackEasterEgg(bot);
     isThisRealEasterEgg(bot);
     haveIGoneMadEasterEgg(bot);
-    iVeLostTheGameEasterEgg(bot);
 }
